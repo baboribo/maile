@@ -1,6 +1,4 @@
 <script>
-    // URL에서 "https://"가 빠진 경우 자동으로 추가하는 기능 만들기 - 현재는 href에서 https 붙여서 열도록 일시적으로 다듬었음.
-
     import { page } from "$app/stores";
     import { mailStore } from "$lib/store.js";
     import { derived } from "svelte/store";
@@ -23,6 +21,9 @@
 
     function addService() {
         if (!serviceName) return;
+        if (!serviceUrl.startsWith("http://") && !serviceUrl.startsWith("https://")) {
+            serviceUrl = "https://" + serviceUrl;
+        }; // serviceUrl에서 http나 https가 있는지 확인하는 로직
 
         mailStore.addService(id, {
             id: crypto.randomUUID(),
@@ -46,7 +47,7 @@
             <div class="title-bar-controls">
                 <button
                     aria-label="Close"
-                    on:click={() => {
+                    onclick={() => {
                         targetId = null;
                         showDialog = false;
                     }}
@@ -62,14 +63,14 @@
             </p>
             <div class="field-row" style="justify-content: flex-end;">
                 <button
-                    on:click={() => {
+                    onclick={() => {
                         // @ts-ignore
                         mailStore.removeService(id, targetId);
                         showDialog = false;
                     }}>예</button
                 >
                 <button
-                    on:click={() => {
+                    onclick={() => {
                         targetId = null;
                         showDialog = false;
                     }}>아니오</button
@@ -89,21 +90,19 @@
     <div>
         <input bind:value={serviceName} placeholder="서비스 이름" />
         <input bind:value={serviceUrl} placeholder="URL (선택)" />
-        <button on:click={addService}>서비스 추가</button>
+        <button onclick={addService}>서비스 추가</button>
     </div>
 
     <ul>
         {#each $mail.services || [] as service}
             <li>
                 {#if service.url}
-                    <a href="https://{service.url}" target="_blank"
-                        >{service.name}</a
-                    >
+                    <a href={service.url}>{service.name}</a>
                 {:else}
                     <span>{service.name}</span>
                 {/if}
                 <button
-                    on:click={() => {
+                    onclick={() => {
                         targetId = service.id;
                         showDialog = true;
                     }}>삭제</button
