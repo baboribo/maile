@@ -97,7 +97,7 @@
         {#each $mail.services || [] as service}
             <li>
                 {#if service.url}
-                    <a href={service.url}>{service.name}</a>
+                    <a href={service.url} target="_blank" rel="noopener noreferrer">{service.name}</a>
                 {:else}
                     <span>{service.name}</span>
                 {/if}
