@@ -5,6 +5,8 @@
 
     let serviceName = "";
     let serviceUrl = "";
+    let editName = ""; // 수정 다이얼로그 입력값
+    let editUrl = "";
 
     let showDialog = false; // 데이터 제거 다이얼로그
     let editDialog = false; // 서비스 수정 다이얼로그
@@ -22,9 +24,12 @@
 
     function addService() {
         if (!serviceName) return;
-        if (!serviceUrl.startsWith("http://") && !serviceUrl.startsWith("https://")) {
+        if (
+            !serviceUrl.startsWith("http://") &&
+            !serviceUrl.startsWith("https://")
+        ) {
             serviceUrl = "https://" + serviceUrl;
-        }; // serviceUrl에서 http나 https가 있는지 확인하는 로직
+        } // serviceUrl에서 http나 https가 있는지 확인하는 로직
 
         mailStore.addService(id, {
             id: crypto.randomUUID(),
@@ -37,7 +42,22 @@
     }
 
     function editService() {
+        if (!editName) return;
+        if (
+            editUrl &&
+            !editUrl.startsWith("http://") &&
+            !editUrl.startsWith("https://")
+        ) {
+            editUrl = "https://" + editUrl;
+        }
 
+        mailStore.editService(id, targetId, {
+            name: editName,
+            url: editUrl,
+        });
+
+        targetId = null;
+        editDialog = false;
     }
 </script>
 
@@ -102,6 +122,31 @@
                 ></button>
             </div>
         </div>
+        <div class="window-body">
+            <div class="field-row">
+                <input
+                    type="text"
+                    bind:value={editName}
+                    placeholder="서비스 이름"
+                />
+            </div>
+            <div class="field-row">
+                <input
+                    type="text"
+                    bind:value={editUrl}
+                    placeholder="URL (선택)"
+                />
+            </div>
+            <div class="field-row" style="justify-content: flex-end;">
+                <button onclick={editService}>확인</button>
+                <button
+                    onclick={() => {
+                        targetId = null;
+                        editDialog = false;
+                    }}>취소</button
+                >
+            </div>
+        </div>
     </div>
 {/if}
 
@@ -122,7 +167,11 @@
         {#each $mail.services || [] as service}
             <li>
                 {#if service.url}
-                    <a href={service.url} target="_blank" rel="noopener noreferrer">{service.name}</a>
+                    <a
+                        href={service.url}
+                        target="_blank"
+                        rel="noopener noreferrer">{service.name}</a
+                    >
                 {:else}
                     <span>{service.name}</span>
                 {/if}
@@ -132,10 +181,14 @@
                         showDialog = true;
                     }}>삭제</button
                 >
-                <button onclick={() => {
-                    targetId = service.id;
-                    editDialog = true;
-                }}>수정</button>
+                <button
+                    onclick={() => {
+                        targetId = service.id;
+                        editName = service.name;
+                        editUrl = service.url || "";
+                        editDialog = true;
+                    }}>수정</button
+                >
             </li>
         {/each}
     </ul>
