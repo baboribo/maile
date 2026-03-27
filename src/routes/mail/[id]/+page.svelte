@@ -7,6 +7,7 @@
     let serviceUrl = "";
 
     let showDialog = false; // 데이터 제거 다이얼로그
+    let editDialog = false; // 서비스 수정 다이얼로그
 
     // @ts-expect-error
     let targetId = null; // 데이터 제거 시 사용되는 타겟 ID
@@ -34,6 +35,10 @@
         serviceName = "";
         serviceUrl = "";
     }
+
+    function editService() {
+
+    }
 </script>
 
 <!-- 이메일 용도 삭제 다이얼로그 -->
@@ -43,7 +48,7 @@
         style="width: 200px; position: fixed; top: 42%; left: 45%;"
     >
         <div class="title-bar">
-            <div class="title-bar-text">용도 주소 삭제</div>
+            <div class="title-bar-text">서비스 삭제</div>
             <div class="title-bar-controls">
                 <button
                     aria-label="Close"
@@ -80,6 +85,26 @@
     </div>
 {/if}
 
+{#if editDialog}
+    <div
+        class="window"
+        style="width: 200px; position: fixed; top: 42%; left: 45%;"
+    >
+        <div class="title-bar">
+            <div class="title-bar-text">서비스 수정</div>
+            <div class="title-bar-controls">
+                <button
+                    aria-label="Close"
+                    onclick={() => {
+                        targetId = null;
+                        editDialog = false;
+                    }}
+                ></button>
+            </div>
+        </div>
+    </div>
+{/if}
+
 {#if $mail}
     <a href="/">목록으로 돌아가기</a>
     <h1 class="desktop-title-email">{$mail.email}</h1>
@@ -88,8 +113,8 @@
 
     <h2 class="desktop-title">서비스 목록</h2>
     <div>
-        <input bind:value={serviceName} placeholder="서비스 이름" />
-        <input bind:value={serviceUrl} placeholder="URL (선택)" />
+        <input type="text" bind:value={serviceName} placeholder="서비스 이름" />
+        <input type="text" bind:value={serviceUrl} placeholder="URL (선택)" />
         <button onclick={addService}>서비스 추가</button>
     </div>
 
@@ -107,6 +132,10 @@
                         showDialog = true;
                     }}>삭제</button
                 >
+                <button onclick={() => {
+                    targetId = service.id;
+                    editDialog = true;
+                }}>수정</button>
             </li>
         {/each}
     </ul>
