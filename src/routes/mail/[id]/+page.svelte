@@ -124,17 +124,23 @@
         </div>
         <div class="window-body">
             <div class="field-row">
+                <label for="text1">서비스 이름</label>
                 <input
                     type="text"
+                    id="text1"
                     bind:value={editName}
                     placeholder="서비스 이름"
+                    style="width: 100%;"
                 />
             </div>
             <div class="field-row">
+                <label for="text2">서비스 URL</label>
                 <input
                     type="text"
+                    id="text2"
                     bind:value={editUrl}
                     placeholder="URL (선택)"
+                    style="width: 100%;"
                 />
             </div>
             <div class="field-row" style="justify-content: flex-end;">
