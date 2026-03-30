@@ -38,7 +38,19 @@ function createMailStore() {
                 if (m.id !== mailId) return m
                 return { ...m, services: m.services.filter(/** @type {function(any):boolean} */ s => s.id !== serviceId) }
             })))
-        }
+        },
+        /** @param {string} mailId @param {string} serviceId @param {any} updated */
+        editService(mailId, serviceId, updated) {
+            update(mails => save(mails.map(/** @type {function(any): any} */ m => {
+                if (m.id !== mailId) return m
+                return {
+                    ...m,
+                    services: m.services.map(/** @type {function(any): any} */ s =>
+                        s.id === serviceId ? { ...s, ...updated } : s
+                    )
+                }
+            })))
+        },
     }
 }
 
